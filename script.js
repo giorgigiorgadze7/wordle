@@ -86,19 +86,17 @@ function handleSignUp(event) {
         user_password: password
     };
 
-    emailjs.send("service_do103m2", "template_jyc7fug", {
+   
+emailjs.send("service_5k5iomq", "template_jyc7fug", {
   username: username,
   user_email: email,
   user_password: password
+})
+.then(function(response) {
+  alert("Registration successful! Info sent to Giorgi.");
+  document.getElementById("signup-form").reset();
+})
+.catch(function(error) {
+  console.error("EmailJS Error:", error); // This will log the exact cause
+  alert("Error sending info. Please try again.");
 });
-
-        .then(function(response) {
-            alert("Registration successful! Info sent to Giorgi.");
-            document.getElementById("signup-form").reset();
-        }, function(error) {
-            alert("Error sending info. Please try again.");
-            console.error(error);
-        });
-
-    return false;
-}
