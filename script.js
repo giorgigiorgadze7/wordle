@@ -61,3 +61,39 @@ function signUp() {
 
     alert(`Გილოცავ ${username}, რეგისტრაცია წარმატებით დასრულდა!`);
 }
+function handleSignUp(event) {
+    event.preventDefault();
+
+    const username = document.getElementById("username").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const confirmEmail = document.getElementById("confirm-email").value.trim();
+    const password = document.getElementById("password").value;
+
+    if (email !== confirmEmail) {
+        alert("Emails do not match.");
+        return false;
+    }
+
+    if (password.length < 8) {
+        alert("Password must be at least 8 characters.");
+        return false;
+    }
+
+    const templateParams = {
+        to_name: "Giorgi",
+        username: username,
+        user_email: email,
+        user_password: password
+    };
+
+    emailjs.send("YOUR_SERVICE_ID", "YOUR_TEMPLATE_ID", templateParams)
+        .then(function(response) {
+            alert("Registration successful! Info sent to Giorgi.");
+            document.getElementById("signup-form").reset();
+        }, function(error) {
+            alert("Error sending info. Please try again.");
+            console.error(error);
+        });
+
+    return false;
+}
