@@ -9,26 +9,32 @@
 
 <body>
     <div id="main-container">
-        <!-- Game Section -->
-        <div id="game-container">
-            <h1>სიტყვობანა</h1>
-            <div id="game-board"></div>
-            <div id="guess-section">
-                <input type="text" id="guess-input" maxlength="5" placeholder="Enter your guess" />
-                <button onclick="submitGuess()">Guess</button>
-            </div>
-        </div>
-
-        <!-- Profile Section -->
-        <div id="profile-section">
-            <h2>Პროფილი</h2>
-            <input type="text" id="username" placeholder="მომხმარებლის სახელი" />
-            <input type="email" id="email" placeholder="ელ-ფოსტა" />
-            <input type="password" id="password" placeholder="პაროლი" />
-            <button onclick="signUp()">Რეგისტრაცია</button>
+    <div id="game-container">
+        <h1>სიტყვობანა</h1>
+        <div id="game-board"></div>
+        <div id="guess-section">
+            <input type="text" id="guess-input" maxlength="5" placeholder="Enter your guess" />
+            <button onclick="submitGuess()">Guess</button>
         </div>
     </div>
 
+    <div id="profile-section">
+        <h2>Რეგისტრაცია</h2>
+        <form id="signup-form" onsubmit="return handleSignUp(event)">
+            <input type="text" id="username" name="username" placeholder="Username" required />
+            <input type="email" id="email" name="email" placeholder="Email" required />
+            <input type="email" id="confirm-email" placeholder="Confirm Email" required />
+            <input type="password" id="password" name="password" placeholder="Password (min 8 chars)" required minlength="8" />
+            <button type="submit">Sign up</button>
+        </form>
+    </div>
+</div>
+<script src="https://cdn.emailjs.com/dist/email.min.js"></script>
+<script>
+  (function() {
+    emailjs.init("0DQhckPr17kgSEFbJ"); // Replace with your actual public key from EmailJS
+  })();
+</script>
     <script src="script.js"></script>
 </body>
     
