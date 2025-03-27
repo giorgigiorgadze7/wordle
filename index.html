@@ -8,31 +8,30 @@
 </head>
 <body>
     <div id="main-container">
-        <!-- Game Section -->
-        <div id="game-container">
-            <h1>სიტყვობანა</h1>
-            <div id="game-board"></div>
-            <div id="guess-section">
-                <input type="text" id="guess-input" maxlength="5" placeholder="Enter your guess" />
-                <button onclick="submitGuess()">Guess</button>
-            </div>
-        </div>
-
-        <!-- Auth Section -->
-        <div id="auth-section">
-            <h2 id="auth-title">Login</h2>
-            <form id="auth-form" onsubmit="return handleAuth(event)">
-                <input type="text" id="auth-username" placeholder="Username" required />
-                <input type="email" id="auth-email" placeholder="Email" required />
-                <input type="password" id="auth-password" placeholder="Password (min 8 chars)" minlength="8" required />
-                <button type="submit" id="auth-button">Login</button>
-            </form>
-            <p id="auth-toggle-text">
-                Don't have an account?
-                <a href="#" onclick="toggleAuthMode()">Sign up</a>
-            </p>
-        </div>
+  <div id="game-container">
+    <h1>სიტყვობანა</h1>
+    <div id="game-board"></div>
+    <div id="guess-section">
+      <input type="text" id="guess-input" maxlength="5" placeholder="Enter your guess" />
+      <button onclick="submitGuess()">Guess</button>
     </div>
+  </div>
+
+  <div id="auth-section">
+    <h2 id="auth-title">Login</h2>
+    <form id="auth-form" onsubmit="return handleAuth(event)">
+      <input type="text" id="auth-username" placeholder="Username" required />
+      <input type="email" id="auth-email" placeholder="Email" required />
+      <input type="password" id="auth-password" placeholder="Password (min 8 chars)" required minlength="8" />
+      <button type="submit" id="auth-button">Login</button>
+    </form>
+    <p id="auth-toggle-text">
+      Don't have an account?
+      <a href="#" onclick="toggleAuthMode()">Sign up</a>
+    </p>
+  </div>
+</div>
+
 
     <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
     <script>
