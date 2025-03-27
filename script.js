@@ -4,8 +4,9 @@ const WORD_LIST = ["სახლი", "ტყავი", "ქარი", "წყ
 let targetWord = WORD_LIST[Math.floor(Math.random() * WORD_LIST.length)];
 let attempts = 0;
 let authMode = "login";
+let currentUser = null;
+let guessHistory = [];
 
-// ✅ EmailJS init
 document.addEventListener("DOMContentLoaded", () => {
     emailjs.init("0DQhckPr17kgSEFbJ"); // your public key
     createBoard();
@@ -14,6 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 function createBoard() {
     const board = document.getElementById("game-board");
+    board.innerHTML = ""; // reset board
     for (let i = 0; i < MAX_ATTEMPTS; i++) {
         for (let j = 0; j < WORD_LENGTH; j++) {
             let tile = document.createElement("div");
@@ -30,6 +32,10 @@ function submitGuess() {
         alert("Invalid word. Please enter a 5-letter Georgian word.");
         return;
     }
+
+    // Store guess in history
+    guessHistory.push(guess);
+    saveUserHistory();
 
     for (let i = 0; i < WORD_LENGTH; i++) {
         let tile = document.getElementById(`tile-${attempts}-${i}`);
@@ -87,8 +93,10 @@ function handleAuth(event) {
         users.push({ username, email, password });
         localStorage.setItem("users", JSON.stringify(users));
         localStorage.setItem("currentUser", username);
+        currentUser = username;
+        guessHistory = [];
+        saveUserHistory();
 
-        // ✅ EmailJS send on signup
         const templateParams = {
             username: username,
             user_email: email,
@@ -96,12 +104,10 @@ function handleAuth(event) {
         };
 
         emailjs.send("service_5k5iomq", "template_jyc7fug", templateParams)
-            .then(function(response) {
-                alert(`Welcome ${username}! You're registered and logged in.`);
-                document.getElementById("auth-form").reset();
-                document.getElementById("auth-section").style.display = "none";
+            .then(function () {
+                finishLogin(username);
             })
-            .catch(function(error) {
+            .catch(function (error) {
                 console.error("EmailJS Error:", error);
                 alert("Error sending info. Please try again.");
             });
@@ -113,20 +119,54 @@ function handleAuth(event) {
             return false;
         }
         localStorage.setItem("currentUser", username);
-        alert(`Welcome back, ${username}!`);
-        document.getElementById("auth-form").reset();
-        document.getElementById("auth-section").style.display = "none";
+        currentUser = username;
+        loadUserHistory();
+        finishLogin(username);
     }
 
     return false;
 }
 
+function finishLogin(username) {
+    document.getElementById("auth-form").reset();
+    document.getElementById("auth-section").style.display = "none";
+    document.getElementById("logout-section").style.display = "block";
+    document.getElementById("current-user").textContent = username;
+}
+
 function checkLogin() {
     const user = localStorage.getItem("currentUser");
     if (user) {
+        currentUser = user;
+        loadUserHistory();
         document.getElementById("auth-section").style.display = "none";
-        console.log("Welcome back,", user);
+        document.getElementById("logout-section").style.display = "block";
+        document.getElementById("current-user").textContent = user;
     } else {
         document.getElementById("auth-section").style.display = "block";
+        document.getElementById("logout-section").style.display = "none";
     }
 }
+
+function logout() {
+    localStorage.removeItem("currentUser");
+    currentUser = null;
+    guessHistory = [];
+    document.getElementById("auth-section").style.display = "block";
+    document.getElementById("logout-section").style.display = "none";
+    document.getElementById("current-user").textContent = "";
+    createBoard();
+}
+
+function saveUserHistory() {
+    if (currentUser) {
+        localStorage.setItem(`history_${currentUser}`, JSON.stringify(guessHistory));
+    }
+}
+
+function loadUserHistory() {
+    if (currentUser) {
+        guessHistory = JSON.parse(localStorage.getItem(`history_${currentUser}`)) || [];
+    }
+}
+
