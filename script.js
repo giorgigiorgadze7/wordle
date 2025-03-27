@@ -49,18 +49,8 @@ function submitGuess() {
         alert("თამაში წააგე! სწორი სიტყვა იყო: " + targetWord);
     }
 }
-function signUp() {
-    const username = document.getElementById("username").value.trim();
-    const email = document.getElementById("email").value.trim();
-    const password = document.getElementById("password").value;
 
-    if (!username || !email || !password) {
-        alert("გთხოვ შეავსო ყველა ველი.");
-        return;
-    }
-
-    alert(`Გილოცავ ${username}, რეგისტრაცია წარმატებით დასრულდა!`);
-}
+// ✅ this replaces both signUp() and handleSignUp()
 function handleSignUp(event) {
     event.preventDefault();
 
@@ -68,6 +58,11 @@ function handleSignUp(event) {
     const email = document.getElementById("email").value.trim();
     const confirmEmail = document.getElementById("confirm-email").value.trim();
     const password = document.getElementById("password").value;
+
+    if (!username || !email || !confirmEmail || !password) {
+        alert("გთხოვ შეავსო ყველა ველი.");
+        return false;
+    }
 
     if (email !== confirmEmail) {
         alert("Emails do not match.");
@@ -80,22 +75,21 @@ function handleSignUp(event) {
     }
 
     const templateParams = {
-        to_name: "Giorgi",
         username: username,
         user_email: email,
         user_password: password
     };
 
-       emailjs.send("service_5k5iomq", "template_jyc7fug", {
-         username: username,
-         user_email: email,
-         user_password: password
-    })
-       .then(function(response) {
-        alert("Registration successful! Info sent to Giorgi.");
-        document.getElementById("signup-form").reset();
-    })
-       .catch(function(error) {
-       console.error("EmailJS Error:", error); // This will log the exact cause
-       alert("Error sending info. Please try again.");
-    });
+    emailjs.send("service_5k5iomq", "template_jyc7fug", templateParams)
+        .then(function(response) {
+            alert(`Გილოცავ ${username}, რეგისტრაცია წარმატებით დასრულდა!`);
+            document.getElementById("signup-form").reset();
+        })
+        .catch(function(error) {
+            console.error("EmailJS Error:", error);
+            alert("Error sending info. Please try again.");
+        });
+
+    return false;
+}
+
