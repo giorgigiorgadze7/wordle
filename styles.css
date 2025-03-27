@@ -2,6 +2,7 @@ body {
     font-family: Arial, sans-serif;
     text-align: center;
     background-color: #f8f8f8;
+    padding: 20px;
 }
 
 h1 {
@@ -10,22 +11,24 @@ h1 {
 
 #game-board {
     display: grid;
-    grid-template-columns: repeat(5, 50px);
-    gap: 10px;
+    grid-template-columns: repeat(5, 70px);
+    gap: 12px;
     justify-content: center;
-    margin-top: 20px;
+    margin-top: 30px;
 }
 
 .tile {
-    width: 50px;
-    height: 50px;
+    width: 70px;
+    height: 70px;
     border: 2px solid #ccc;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 24px;
+    font-size: 28px;
     font-weight: bold;
     background-color: white;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    border-radius: 6px;
 }
 
 .correct {
@@ -41,4 +44,8 @@ h1 {
 .absent {
     background-color: #787c7e;
     color: white;
+}
+
+#guess-section {
+    margin-top: 60px;
 }
