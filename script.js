@@ -4,9 +4,7 @@ const WORD_LIST = ["სახლი", "ტყავი", "ქარი", "წყ
 let targetWord = WORD_LIST[Math.floor(Math.random() * WORD_LIST.length)];
 let attempts = 0;
 
-document.addEventListener("DOMContentLoaded", () => {
-    createBoard();
-});
+let authMode = "login";
 
 function createBoard() {
     const board = document.getElementById("game-board");
@@ -44,52 +42,68 @@ function submitGuess() {
     document.getElementById("guess-input").value = "";
 
     if (guess === targetWord) {
-        alert("გილოცავ! სიტყვა სწორედ გამოიცანი.");
+        alert("გილოცავ! სიტყვა ცორედ გამოიცანი.");
     } else if (attempts >= MAX_ATTEMPTS) {
-        alert("თამაში წააგე! სწორი სიტყვა იყო: " + targetWord);
+        alert("\u10d7\u10d0\u10db\u10d0\u10e8\u10d8 \u10ec\u10d0\u10d0\u10d2\u10d4! \u10e1\u10d0\u10e5\u10db\u10d8 \u10e1\u10d8\u10e2\u10e7\u10d5\u10d0 \u10d8\u10e7\u10dd: " + targetWord);
     }
 }
 
-// ✅ this replaces both signUp() and handleSignUp()
-function handleSignUp(event) {
+function toggleAuthMode() {
+    authMode = authMode === "login" ? "signup" : "login";
+    document.getElementById("auth-title").textContent = authMode === "login" ? "Login" : "Sign Up";
+    document.getElementById("auth-button").textContent = authMode === "login" ? "Login" : "Sign up";
+    document.getElementById("auth-toggle-text").innerHTML = authMode === "login"
+        ? `Don't have an account? <a href="#" onclick="toggleAuthMode()">Sign up</a>`
+        : `Already have an account? <a href="#" onclick="toggleAuthMode()">Login</a>`;
+}
+
+function handleAuth(event) {
     event.preventDefault();
 
-    const username = document.getElementById("username").value.trim();
-    const email = document.getElementById("email").value.trim();
-    const confirmEmail = document.getElementById("confirm-email").value.trim();
-    const password = document.getElementById("password").value;
+    const username = document.getElementById("auth-username").value.trim();
+    const email = document.getElementById("auth-email").value.trim();
+    const password = document.getElementById("auth-password").value;
 
-    if (!username || !email || !confirmEmail || !password) {
-        alert("გთხოვ შეავსო ყველა ველი.");
-        return false;
+    let users = JSON.parse(localStorage.getItem("users")) || [];
+
+    if (authMode === "signup") {
+        const userExists = users.some(u => u.username === username || u.email === email);
+        if (userExists) {
+            alert("User already exists!");
+            return false;
+        }
+
+        users.push({ username, email, password });
+        localStorage.setItem("users", JSON.stringify(users));
+        localStorage.setItem("currentUser", username);
+        alert(`Welcome ${username}! You're registered and logged in.`);
+    } else {
+        const user = users.find(u => u.username === username && u.email === email && u.password === password);
+        if (!user) {
+            alert("Incorrect credentials.");
+            return false;
+        }
+        localStorage.setItem("currentUser", username);
+        alert(`Welcome back, ${username}!");
     }
 
-    if (email !== confirmEmail) {
-        alert("Emails do not match.");
-        return false;
-    }
-
-    if (password.length < 8) {
-        alert("Password must be at least 8 characters.");
-        return false;
-    }
-
-    const templateParams = {
-        username: username,
-        user_email: email,
-        user_password: password
-    };
-
-    emailjs.send("service_5k5iomq", "template_jyc7fug", templateParams)
-        .then(function(response) {
-            alert(`Გილოცავ ${username}, რეგისტრაცია წარმატებით დასრულდა!`);
-            document.getElementById("signup-form").reset();
-        })
-        .catch(function(error) {
-            console.error("EmailJS Error:", error);
-            alert("Error sending info. Please try again.");
-        });
-
+    document.getElementById("auth-form").reset();
+    document.getElementById("auth-section").style.display = "none";
     return false;
 }
+
+function checkLogin() {
+    const user = localStorage.getItem("currentUser");
+    if (user) {
+        document.getElementById("auth-section").style.display = "none";
+        console.log("Welcome back,", user);
+    } else {
+        document.getElementById("auth-section").style.display = "block";
+    }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    createBoard();
+    checkLogin();
+});
 
