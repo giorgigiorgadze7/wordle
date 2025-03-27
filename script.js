@@ -49,3 +49,15 @@ function submitGuess() {
         alert("თამაში წააგე! სწორი სიტყვა იყო: " + targetWord);
     }
 }
+function signUp() {
+    const username = document.getElementById("username").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value;
+
+    if (!username || !email || !password) {
+        alert("გთხოვ შეავსო ყველა ველი.");
+        return;
+    }
+
+    alert(`Გილოცავ ${username}, რეგისტრაცია წარმატებით დასრულდა!`);
+}
