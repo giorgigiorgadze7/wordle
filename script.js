@@ -86,7 +86,12 @@ function handleSignUp(event) {
         user_password: password
     };
 
-    emailjs.send("service_do103m2", "template_jyc7fug", templateParams)
+    emailjs.send("service_do103m2", "template_jyc7fug", {
+  username: username,
+  user_email: email,
+  user_password: password
+});
+
         .then(function(response) {
             alert("Registration successful! Info sent to Giorgi.");
             document.getElementById("signup-form").reset();
